@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมสุ่มจับกลุ่มนักเรียน</title>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #3f51b5;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 20px auto;
+            width: 200px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .group {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .group-title {
+            color: #3f51b5;
+            margin-top: 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .student-list {
+            padding-left: 20px;
+        }
+        .student-list li {
+            margin-bottom: 5px;
+        }
+        .settings {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+        .class-info {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .hidden {
+            display: none;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-secondary {
+            background-color: #2196F3;
+        }
+        .btn-secondary:hover {
+            background-color: #0b7dda;
+        }
+        .btn-danger {
+            background-color: #f44336;
+        }
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #ddd;
+            font-size: 14px;
+            color: #555;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+        .footer-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .footer-info div {
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-info i {
+            margin-right: 5px;
+            color: #3f51b5;
+        }
+        
+        @media print {
+            .footer {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                background-color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+            <div class="container">
+        <h1>โปรแกรมสุ่มจับกลุ่มนักเรียน</h1>
+        <div style="text-align: center; margin-bottom: 20px; padding: 10px; background-color: #fff3cd; border-radius: 5px; border: 1px solid #ffeeba;">
+            <strong>ทดสอบโปรแกรม:</strong> คลิกที่ปุ่ม "โหลดข้อมูลตัวอย่าง" ด้านล่างช่องรายชื่อนักเรียนเพื่อโหลดข้อมูลตัวอย่าง จากนั้นกดปุ่ม "สุ่มจับกลุ่ม"
+        </div>
+        <div style="text-align: right; font-size: 12px; margin-bottom: 10px; color: #666;">
+            <span id="currentDateTime"></span>
+        </div>
+        
+        <div class="settings">
+            <div class="form-group">
+                <label for="grade">ระดับชั้น:</label>
+                <select id="grade">
+                    <option value="">เลือกระดับชั้น</option>
+                    <option value="อนุบาล 1">อนุบาล 1</option>
+                    <option value="อนุบาล 2">อนุบาล 2</option>
+                    <option value="อนุบาล 3">อนุบาล 3</option>
+                    <option value="ประถมศึกษาปีที่ 1">ประถมศึกษาปีที่ 1</option>
+                    <option value="ประถมศึกษาปีที่ 2">ประถมศึกษาปีที่ 2</option>
+                    <option value="ประถมศึกษาปีที่ 3">ประถมศึกษาปีที่ 3</option>
+                    <option value="ประถมศึกษาปีที่ 4">ประถมศึกษาปีที่ 4</option>
+                    <option value="ประถมศึกษาปีที่ 5">ประถมศึกษาปีที่ 5</option>
+                    <option value="ประถมศึกษาปีที่ 6">ประถมศึกษาปีที่ 6</option>
+                    <option value="มัธยมศึกษาปีที่ 1">มัธยมศึกษาปีที่ 1</option>
+                    <option value="มัธยมศึกษาปีที่ 2">มัธยมศึกษาปีที่ 2</option>
+                    <option value="มัธยมศึกษาปีที่ 3">มัธยมศึกษาปีที่ 3</option>
+                    <option value="มัธยมศึกษาปีที่ 4">มัธยมศึกษาปีที่ 4</option>
+                    <option value="มัธยมศึกษาปีที่ 5">มัธยมศึกษาปีที่ 5</option>
+                    <option value="มัธยมศึกษาปีที่ 6">มัธยมศึกษาปีที่ 6</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="room">ห้อง:</label>
+                <select id="room">
+                    <option value="">เลือกห้อง</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="studentCount">จำนวนนักเรียนทั้งหมด:</label>
+                <input type="number" id="studentCount" min="1" placeholder="ระบุจำนวนนักเรียน">
+                <div id="studentCountError" class="error hidden">กรุณาระบุจำนวนนักเรียน</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="groupCount">จำนวนกลุ่ม:</label>
+                <input type="number" id="groupCount" min="1" placeholder="ระบุจำนวนกลุ่ม">
+                <div id="groupCountError" class="error hidden">กรุณาระบุจำนวนกลุ่ม</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="namesInput">รายชื่อนักเรียน (ไม่ระบุก็ได้ จะใช้เลขที่แทน):</label>
+                <textarea id="namesInput" placeholder="พิมพ์รายชื่อนักเรียน แยกด้วยการขึ้นบรรทัดใหม่" rows="5" style="width: 100%; resize: vertical;"></textarea>
+                <div style="margin-top: 10px;">
+                    <button type="button" id="loadSampleDataButton" style="width: auto; padding: 5px 10px; font-size: 14px; background-color: #ff9800;">โหลดข้อมูลตัวอย่าง</button>
+                </div>
+            </div>
+            
+            <button id="randomizeButton">สุ่มจับกลุ่ม</button>
+        </div>
+        
+        <div id="resultSection" class="result hidden">
+            <div class="class-info" id="classInfo"></div>
+            <div id="groupsContainer"></div>
+            
+            <div class="btn-group">
+                <button id="randomizeAgainButton" class="btn-secondary">สุ่มใหม่</button>
+                <button id="printButton" class="btn-secondary">พิมพ์</button>
+                <button id="clearButton" class="btn-danger">ล้างข้อมูล</button>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p><strong>โปรแกรมสุ่มจับกลุ่มนักเรียน</strong> เวอร์ชัน 1.0</p>
+            <div class="footer-info">
+                <div><i>📅</i> วันที่พัฒนา: 10 มีนาคม 2568</div>
+                <div><i>💻</i> พัฒนาโดย: ทีมพัฒนาซอฟต์แวร์เพื่อการศึกษา</div>
+                <div><i>📧</i> อีเมล: support@edusoftware.co.th</div>
+            </div>
+            <p style="margin-top: 10px; font-size: 12px;">© 2568 สงวนลิขสิทธิ์ - สามารถใช้เพื่อการศึกษาได้โดยไม่มีค่าใช้จ่าย</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const randomizeButton = document.getElementById('randomizeButton');
+            const randomizeAgainButton = document.getElementById('randomizeAgainButton');
+            const printButton = document.getElementById('printButton');
+            const clearButton = document.getElementById('clearButton');
+            const resultSection = document.getElementById('resultSection');
+            const groupsContainer = document.getElementById('groupsContainer');
+            const classInfo = document.getElementById('classInfo');
+            
+            // Function to validate inputs
+            function validateInputs() {
+                const studentCount = document.getElementById('studentCount').value;
+                const groupCount = document.getElementById('groupCount').value;
+                let isValid = true;
+                
+                // Validate student count
+                if (!studentCount || studentCount < 1) {
+                    document.getElementById('studentCountError').classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    document.getElementById('studentCountError').classList.add('hidden');
+                }
+                
+                // Validate group count
+                if (!groupCount || groupCount < 1) {
+                    document.getElementById('groupCountError').classList.remove('hidden');
+                    isValid = false;
+                } else {
+                    document.getElementById('groupCountError').classList.add('hidden');
+                }
+                
+                // Additional validation: groups shouldn't be more than students
+                if (parseInt(groupCount) > parseInt(studentCount)) {
+                    alert('จำนวนกลุ่มต้องไม่มากกว่าจำนวนนักเรียน');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+            
+            // Function to create student array
+            function createStudentArray() {
+                const studentCount = parseInt(document.getElementById('studentCount').value);
+                const namesInput = document.getElementById('namesInput').value;
+                let names = [];
+                
+                if (namesInput.trim()) {
+                    // Use provided names
+                    names = namesInput.split('\n').filter(name => name.trim());
+                    
+                    // If there are fewer names than student count, add numbers for the rest
+                    if (names.length < studentCount) {
+                        for (let i = names.length + 1; i <= studentCount; i++) {
+                            names.push(`นักเรียนเลขที่ ${i}`);
+                        }
+                    } else if (names.length > studentCount) {
+                        // If there are more names than student count, trim the array
+                        names = names.slice(0, studentCount);
+                    }
+                } else {
+                    // Create array with numbers as names
+                    for (let i = 1; i <= studentCount; i++) {
+                        names.push(`นักเรียนเลขที่ ${i}`);
+                    }
+                }
+                
+                return names;
+            }
+            
+            // Fisher-Yates shuffle algorithm
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+            
+            // Function to distribute students into groups
+            function distributeGroups(students, groupCount) {
+                const shuffledStudents = shuffleArray([...students]);
+                const groups = Array.from({ length: groupCount }, () => []);
+                
+                // Distribute students evenly
+                shuffledStudents.forEach((student, index) => {
+                    const groupIndex = index % groupCount;
+                    groups[groupIndex].push(student);
+                });
+                
+                return groups;
+            }
+            
+            // Function to display groups
+            function displayGroups(groups) {
+                groupsContainer.innerHTML = '';
+                
+                groups.forEach((group, index) => {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'group';
+                    
+                    const groupTitle = document.createElement('h3');
+                    groupTitle.className = 'group-title';
+                    groupTitle.textContent = `กลุ่มที่ ${index + 1} (${group.length} คน)`;
+                    groupDiv.appendChild(groupTitle);
+                    
+                    const studentList = document.createElement('ul');
+                    studentList.className = 'student-list';
+                    
+                    group.forEach(student => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = student;
+                        studentList.appendChild(listItem);
+                    });
+                    
+                    groupDiv.appendChild(studentList);
+                    groupsContainer.appendChild(groupDiv);
+                });
+            }
+            
+            // Function to randomize groups
+            function randomizeGroups() {
+                if (!validateInputs()) {
+                    return;
+                }
+                
+                const grade = document.getElementById('grade').value;
+                const room = document.getElementById('room').value;
+                const studentCount = document.getElementById('studentCount').value;
+                const groupCount = document.getElementById('groupCount').value;
+                
+                // Create display class info
+                let classInfoText = '';
+                if (grade) {
+                    classInfoText += `ระดับชั้น${grade}`;
+                }
+                if (room) {
+                    classInfoText += ` ห้อง ${room}`;
+                }
+                if (classInfoText) {
+                    classInfo.textContent = classInfoText;
+                    classInfo.classList.remove('hidden');
+                } else {
+                    classInfo.classList.add('hidden');
+                }
+                
+                const students = createStudentArray();
+                const groups = distributeGroups(students, parseInt(groupCount));
+                
+                displayGroups(groups);
+                resultSection.classList.remove('hidden');
+            }
+            
+            // Sample data
+            const sampleData = {
+                grade: "ประถมศึกษาปีที่ 5",
+                room: "3",
+                studentCount: 30,
+                groupCount: 6,
+                names: [
+                    "ด.ช. กรวิชญ์ มีสุข",
+                    "ด.ญ. กัญญาพัชร แสงอรุณ",
+                    "ด.ช. จิรายุ ภักดี",
+                    "ด.ญ. ชนิกานต์ พงษ์สุวรรณ",
+                    "ด.ช. ชยพล รุ่งเรือง",
+                    "ด.ญ. ฐิติรัตน์ ชาญชัย",
+                    "ด.ช. ณัฐวุฒิ แก้วมณี",
+                    "ด.ญ. ณิชา สมบูรณ์",
+                    "ด.ช. ธนกฤต วงศ์สวัสดิ์",
+                    "ด.ญ. ธัญชนก ศรีวิไล",
+                    "ด.ช. นนทกร ประเสริฐ",
+                    "ด.ญ. นภัสสร จันทร์เพ็ญ",
+                    "ด.ช. ปัณณวิชญ์ บุญมี",
+                    "ด.ญ. ปาริชาติ พลเดช",
+                    "ด.ช. พชรพล เจริญศิลป์",
+                    "ด.ญ. พิชญา นิลพันธ์",
+                    "ด.ช. ภูริณัฐ สุขสวัสดิ์",
+                    "ด.ญ. มนัสนันท์ คงคา",
+                    "ด.ช. รัชชานนท์ ทองดี",
+                    "ด.ญ. รินรดา สุทธิพงษ์",
+                    "ด.ช. วชิรวิทย์ นาคประเสริฐ",
+                    "ด.ญ. วรรณวิสา บุญยืน",
+                    "ด.ช. ศักดิ์สิทธิ์ พรหมเทพ",
+                    "ด.ญ. ศิริกานต์ ศรีสุข",
+                    "ด.ช. สิรวิชญ์ เอี่ยมสอาด",
+                    "ด.ญ. สุชานาถ วงศ์วิวัฒน์",
+                    "ด.ช. อชิรวัตร อินทรโชติ",
+                    "ด.ญ. อภิชญา เกษมสันต์",
+                    "ด.ช. อมรเทพ ประดิษฐ์",
+                    "ด.ญ. อริสรา ทรัพย์สมบูรณ์"
+                ]
+            };
+            
+            // Function to load sample data
+            function loadSampleData() {
+                document.getElementById('grade').value = sampleData.grade;
+                document.getElementById('room').value = sampleData.room;
+                document.getElementById('studentCount').value = sampleData.studentCount;
+                document.getElementById('groupCount').value = sampleData.groupCount;
+                document.getElementById('namesInput').value = sampleData.names.join('\n');
+            }
+            
+            // Event listeners
+            randomizeButton.addEventListener('click', randomizeGroups);
+            randomizeAgainButton.addEventListener('click', randomizeGroups);
+            
+            clearButton.addEventListener('click', function() {
+                document.getElementById('grade').value = '';
+                document.getElementById('room').value = '';
+                document.getElementById('studentCount').value = '';
+                document.getElementById('groupCount').value = '';
+                document.getElementById('namesInput').value = '';
+                resultSection.classList.add('hidden');
+                document.getElementById('studentCountError').classList.add('hidden');
+                document.getElementById('groupCountError').classList.add('hidden');
+            });
+            
+            document.getElementById('loadSampleDataButton').addEventListener('click', loadSampleData);
+            
+            // Display current date and time
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                };
+                document.getElementById('currentDateTime').textContent = 'วันที่และเวลาปัจจุบัน: ' + now.toLocaleDateString('th-TH', options);
+            }
+            
+            // Update date time when page loads
+            updateDateTime();
+            
+            // Update date time every minute
+            setInterval(updateDateTime, 60000);
+            
+            printButton.addEventListener('click', function() {
+                window.print();
+            });
+        });
+    </script>
+</body>
+</html>
